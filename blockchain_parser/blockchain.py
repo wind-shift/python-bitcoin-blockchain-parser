@@ -205,13 +205,16 @@ class Blockchain(object):
         # filter out stale blocks, so we are left only with block indexes
         # that have been confirmed
         # (or are new enough that they haven't yet been confirmed)
-        blockIndexes = list(filter(lambda block: block.hash not in stale_blocks, blockIndexes))
+        blockIndexes = sorted(
+            filter(lambda block: block.hash not in stale_blocks, blockIndexes),
+            key=lambda block: block.height
+        )
 
         if end is None:
             end = len(blockIndexes)
 
         if end < start:
-            blockIndexes = list(reversed(blockIndexes))
+            blockIndexes.reverse()
             start = len(blockIndexes) - start
             end = len(blockIndexes) - end
 
